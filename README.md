@@ -29,3 +29,9 @@ Optional `--bundle-output /absolute/new-folder` produces a developer bundle. Rem
 Commit source, publish a fixed GitHub Release ZIP, and submit exact candidate metadata to [the official index](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/new/choose). After static checks a maintainer adds plugin-approved. Actions create/merge an evidence PR, revalidate, publish the catalog and close the Issue. Authors do not approve themselves, merge metadata or upload DLLs to the index. [Author guide](https://github.com/HunYuan2333/Phinix-Plugin-Index/blob/main/GitHubBotGuide.md).
 
 Playtest remains a separate developer fixture and is excluded from the official catalog. This repository owns example source and releases; the index stores validated metadata only.
+
+## Published example
+
+Version 1.0.0 is available from the official store. The complete normal route is [submission #15](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/15) → [evidence PR #16](https://github.com/HunYuan2333/Phinix-Plugin-Index/pull/16) → [successful automatic publication](https://github.com/HunYuan2333/Phinix-Plugin-Index/actions/runs/37335979507). GitHub and CF downloads were checked against the same SHA-256. Game acceptance remains a manual step; the checklist above covers it.
+
+Technical settings-section IDs identify registrations. This example renders its title through its own localizer; a current host avoids showing untranslated IDs as headings.

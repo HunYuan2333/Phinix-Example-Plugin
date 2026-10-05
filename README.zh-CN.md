@@ -29,3 +29,9 @@ python3 pack.py --phinix-root /absolute/Phinix-Rework --game-references /absolut
 提交源码、发布固定 Release ZIP、向[正式索引](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/new/choose)提交准确候选。静态检查通过后维护者添加 plugin-approved；机器人生成并合入证据 PR、复核、发布目录，成功关闭 Issue。作者不自我批准、不手工合入元数据、不向 index 上传 DLL。参见[发布者指南](https://github.com/HunYuan2333/Phinix-Plugin-Index/blob/main/GitHubBotGuide.zh-CN.md)。
 
 旧 Playtest 留在独立测试仓库，不进入正式目录。本仓库存源码及资产，index 只保存校验后的元数据。
+
+## 已发布示例
+
+1.0.0 已在正式商店上架，完整正规流程为[申请 #15](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/15) → [证据 PR #16](https://github.com/HunYuan2333/Phinix-Plugin-Index/pull/16) → [自动发布成功](https://github.com/HunYuan2333/Phinix-Plugin-Index/actions/runs/37335979507)。GitHub 与 CF 下载已核对相同 SHA-256。尚需按照上方清单进行人工游戏验收。
+
+设置区内部 ID 用于注册，示例通过自身本地化服务显示标题；新版 host 不会将未翻译的内部 ID 当作玩家标题。
