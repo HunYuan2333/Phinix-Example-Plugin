@@ -19,7 +19,7 @@
 需要 .NET 10、含本地化支持的 Phinix-Rework 开发检出、自备 RimWorld 1.6 参考。1.0.0 基于 Assembly-CSharp 1.6.9676.18020 / ClientExtensionAbstractions 1.7.0，不分发参考 DLL。
 
 ```sh
-python3 pack.py --phinix-root /absolute/Phinix-Rework --game-references /absolute/RimWorld/Managed --output /absolute/new-output/phinix-example-basic-1.0.0.zip
+python3 pack.py --phinix-root /absolute/Phinix-Rework --game-references /absolute/RimWorld/Managed --output /absolute/new-output/phinix-example-basic-1.0.1.zip
 ```
 
 可选 --bundle-output /absolute/new-folder 生成开发文件夹。商店安装前移走手工副本避免重复。包/模块 ID 为 phinix.example.basic，程序集 Phinix.Example.Basic，不迁移旧 Playtest 身份和计数。

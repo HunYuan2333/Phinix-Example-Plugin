@@ -19,7 +19,7 @@ Install Phinix Example Plugin from the official store and restart. Open Example,
 Requires .NET 10, a Phinix-Rework development checkout with localization support and your own RimWorld 1.6 references. Release 1.0.0 targets Assembly-CSharp 1.6.9676.18020 and ClientExtensionAbstractions 1.7.0. Never distribute reference DLLs.
 
 ```sh
-python3 pack.py --phinix-root /absolute/Phinix-Rework --game-references /absolute/RimWorld/Managed --output /absolute/new-output/phinix-example-basic-1.0.0.zip
+python3 pack.py --phinix-root /absolute/Phinix-Rework --game-references /absolute/RimWorld/Managed --output /absolute/new-output/phinix-example-basic-1.0.1.zip
 ```
 
 Optional `--bundle-output /absolute/new-folder` produces a developer bundle. Remove manual duplicates before a store installation. Package/module ID: phinix.example.basic; assembly: Phinix.Example.Basic. Old Playtest settings/identity are not migrated.
