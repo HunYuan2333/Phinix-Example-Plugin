@@ -4,7 +4,7 @@
   "display": {
     "name": "Phinix Example Plugin",
     "summary": "A simple example of plugin tabs, persistent settings and localization. Click the counter to explore the extension API; it does not create items or change your colony.",
-    "changelog": "First release: localized tab, persistent counter, live settings and confirmed reset. No item generation or gameplay actions."
+    "changelog": "1.0.1: the packager reads its version from the project. Exercises an explicitly confirmed upgrade; persistent counter and settings are retained. No gameplay actions."
   },
   "strings": {
     "tab": "Example",
