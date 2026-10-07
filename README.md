@@ -1,37 +1,114 @@
 # Phinix Example Plugin
 
-[中文](README.zh-CN.md). A small plugin-author example derived from Playtest with all silver/item generation removed. It uses the same reviewed distribution route as other managed DLL plugins.
+<p align="center">
+  English · <a href="./README.zh-CN.md">简体中文</a>
+</p>
 
-- Register a localized tab and settings section with public host contracts.
-- Persist a click counter and a “Show explanations” option using package-prefixed keys. Changing the option immediately affects the tab.
-- Reset the counter through a confirmation guarded against callbacks from an earlier activation.
-- Load English/Chinese JSON, format count placeholders, react to language changes and clean up subscriptions during shutdown.
-- Restore GUI state after drawing and use responsive tab hints.
+The official minimal reference implementation for authoring, packaging, and publishing Phinix managed plugins (Package ID: `phinix.example.basic`).
 
-Only the plugin’s own settings change. No map, colony, item, network or save operations are performed. Settings belong to the current game profile, are shared across saves, and survive uninstall/reinstall. This is not a per-save persistence example.
+---
 
-## Try it
+## Overview & Features
 
-Install Phinix Example Plugin from the official store and restart. Open Example, count clicks, toggle explanations in Phinix settings, and test reset/cancel/confirm. Switch English/Chinese; restart and check retained values. Disable/re-enable or uninstall via Extension manager and restart. Compilation and static checks do not replace game acceptance.
+This example demonstrates the standard lifecycle, UI extension patterns, and distribution process for managed plugins:
+- **Custom Localized Tab**: Registers a top-level tab in the Phinix window using `IMainTabProvider`.
+- **Persistent Settings**: Saves user configuration using `IClientSettingsContext` with package-scoped keys.
+- **Interactive State**: Implements an interactive click counter, dynamic layout hints, and reset confirmation dialogs.
+- **Host Localization**: Loads package-scoped English (`en-US.json`) and Simplified Chinese (`zh-CN.json`) strings.
+- **Safe Execution**: **No silver or item generation, no colony modifications, and no external network calls.**
 
-## Build and package
+---
 
-Requires .NET 10, a Phinix-Rework development checkout with localization support and your own RimWorld 1.6 references. Release 1.0.0 targets Assembly-CSharp 1.6.9676.18020 and ClientExtensionAbstractions 1.7.0. Never distribute reference DLLs.
+## Player Experience
 
-```sh
-python3 pack.py --phinix-root /absolute/Phinix-Rework --game-references /absolute/RimWorld/Managed --output /absolute/new-output/phinix-example-basic-1.0.2.zip
+To try this plugin in RimWorld:
+1. Open the in-game Phinix window and switch to the **Store** (`商店`) tab.
+2. Locate **Phinix Example Plugin** and click **Install** (`安装`).
+3. **Restart RimWorld** to load the plugin assembly.
+4. Open the Phinix window:
+   - Click the new **Example** (`示例`) tab and increment the click counter.
+   - Go to **Settings** (`设置`) → **Example** to toggle explanation tooltips or reset the counter.
+   - Switch the game language between English and Simplified Chinese to observe automatic text updates.
+5. In **Extension Manager** (`扩展管理`), test disabling or uninstalling the plugin, then restart the game to confirm clean teardown.
+
+---
+
+## Source Code Map
+
+| Responsibility | File / Symbol | Description |
+| :--- | :--- | :--- |
+| **Module Entry & Lifecycle** | `example/ExampleExtension.cs` (`ExampleExtension`) | Implements `IPhinixExtensionModule` and `IActivatablePhinixExtensionModule`. Handles registration and teardown. |
+| **State & Settings Management** | `example/ExampleExtension.cs` (`ExampleState`) | Stores persisted keys (e.g., `phinix.example.basic.clicks`) and manages localization events. |
+| **Tab UI Rendering** | `example/ExampleExtension.cs` (`ExampleTab`) | Implements `IMainTabProvider` to draw responsive buttons and text. |
+| **Settings Panel** | `example/ExampleExtension.cs` (`ExampleSettingsPanel`) | Implements `IClientSettingsPanelProvider` to render settings checkboxes and action buttons. |
+| **Dual-Language Resources** | `example/Resources/Localization/{en-US,zh-CN}.json` | Package-scoped translations with placeholder format arguments. |
+| **Packaging Tool** | `pack.py` | Invokes the official `ManagedPackageTool` to generate schema-compliant release ZIPs. |
+
+---
+
+## Build & Packaging
+
+### Prerequisites
+
+- **.NET 10 SDK** (runs compilation and packaging tools)
+- **Local Phinix-Rework Source**: Used to reference `Utils` and `ClientExtensionAbstractions`.
+- **RimWorld 1.6 References**: Compile-only assemblies (`Assembly-CSharp.dll`, `UnityEngine*.dll`). Never commit or distribute game assemblies.
+
+### Quick Packaging Command
+
+From this repository's root, execute:
+
+```bash
+python3 pack.py \
+  --phinix-root <path-to-Phinix-Rework> \
+  --game-references <path-to-RimWorld-Managed> \
+  --output <path-to-output>/phinix-example-basic-1.0.2.zip
 ```
 
-Optional `--bundle-output /absolute/new-folder` produces a developer bundle. Remove manual duplicates before a store installation. Package/module ID: phinix.example.basic; assembly: Phinix.Example.Basic. Old Playtest settings/identity are not migrated.
+To create an uncompressed developer folder for direct local testing, add:
+`--bundle-output <path-to-output>/phinix-example-basic/`
 
-## Normal publication flow
+---
 
-Commit source, publish a fixed GitHub Release ZIP, and submit exact candidate metadata to [the official index](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/new/choose). After static checks a maintainer adds plugin-approved. Actions create/merge an evidence PR, revalidate, publish the catalog and close the Issue. Authors do not approve themselves, merge metadata or upload DLLs to the index. [Author guide](https://github.com/HunYuan2333/Phinix-Plugin-Index/blob/main/GitHubBotGuide.md).
+## Package Structure
 
-Playtest remains a separate developer fixture and is excluded from the official catalog. This repository owns example source and releases; the index stores validated metadata only.
+A valid Phinix managed plugin package maintains this internal directory layout:
 
-## Published example
+```text
+phinix-example-basic-1.0.2.zip
+├── manifest.json
+├── Assemblies/
+│   └── Phinix.Example.Basic.dll
+└── Resources/
+    └── Localization/
+        ├── en-US.json
+        └── zh-CN.json
+```
 
-Version 1.0.0 is available from the official store. The complete normal route is [submission #15](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/15) → [evidence PR #16](https://github.com/HunYuan2333/Phinix-Plugin-Index/pull/16) → [successful automatic publication](https://github.com/HunYuan2333/Phinix-Plugin-Index/actions/runs/37335979507). GitHub and CF downloads were checked against the same SHA-256. Game acceptance remains a manual step; the checklist above covers it.
+- **`manifest.json`**: Package identifier, version, declared assemblies, target Phinix version range, and dependencies.
+- **`Assemblies/`**: Contains only the plugin's own compiled DLLs.
+- **`Resources/`**: Contains assets and localization dictionaries scoped strictly to this package.
 
-Technical settings-section IDs identify registrations. This example renders its title through its own localizer; a current host avoids showing untranslated IDs as headings.
+> [!CAUTION]
+> The ZIP package must **never** contain RimWorld game assemblies (`Assembly-CSharp.dll`, `UnityEngine*.dll`), host assemblies (`Utils.dll`, `ClientExtensionAbstractions.dll`), or Harmony. Including host or game DLLs causes runtime assembly clashes and triggers automated rejection by the index validator.
+
+---
+
+## Localization & Fallbacks
+
+- **Dual-Language Dictionaries**: Placed under `Resources/Localization/<locale>.json`.
+- **Resolution & Fallback**: The host resolves strings according to the active game language, falling back to `en-US` when a translation is unavailable.
+- **Missing Keys**: If a key is missing in all dictionaries, the host localizer returns the raw key name rather than throwing exceptions or interrupting drawing.
+- **Catalog Metadata vs. In-Game UI**: Catalog display names, summaries, and changelogs are defined in the index submission candidate; in-game UI strings are packaged inside the plugin ZIP.
+
+---
+
+## Adapting into Your Own Plugin
+
+To turn this example into your own custom plugin:
+1. **Change Identities**: Update the package ID (e.g., `myname.myplugin`) in `Example.csproj`, `manifest.json`, and all `[PhinixExtension("...")]` attributes.
+2. **Namespace & Assembly Name**: Rename `Phinix.Example.Basic` and update assembly outputs in `Example.csproj`.
+3. **Settings Key Prefix**: Prefix all settings keys with your package ID (e.g., `myname.myplugin.settingKey`) to avoid colliding with other plugins.
+4. **Publish & Submit**:
+   - Create a public GitHub repository and publish an immutable GitHub Release containing your ZIP package.
+   - Submit an issue to [Phinix-Plugin-Index](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/new/choose) following the [Submission Guide](https://github.com/HunYuan2333/Phinix-Plugin-Index#author-submission-guide).

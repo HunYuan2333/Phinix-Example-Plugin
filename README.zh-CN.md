@@ -1,37 +1,114 @@
 # Phinix 示例插件
 
-[English](README.md)。由 Playtest 改成的正式开发示例，已删除全部白银/物品生成能力，走普通托管 DLL 插件的审核与发布路线。
+<p align="center">
+  <a href="./README.md">English</a> · 简体中文
+</p>
 
-- 公开 API 注册多语言 Tab 和设置组。
-- 持久计数、“显示说明”选项即时影响 Tab，设置键使用插件 ID 前缀。
-- 确认窗口重置计数；旧激活周期的回调不能修改设置。
-- 中英文 JSON、参数格式化、语言变化事件与停用时清理。
-- 绘制后恢复 GUI 状态，提供响应式布局提示。
+Phinix 托管插件官方最小完备参考实现（包 ID: `phinix.example.basic`）。
 
-只修改自身设置，无地图、殖民地、物品、网络或存档操作。设置属于当前游戏用户配置，跨存档共用，卸载重装保留；不作为按存档持久化示例。
+---
 
-## 体验
+## 概述与功能特性
 
-正式商店安装“Phinix 示例插件”并重启，打开“示例”点击计数。在 Phinix 设置切换说明，确认 Tab 即时变化；测试重置取消/确认、中英文切换和重启保留设置。扩展管理停用/启用或卸载后重启。编译与静态验证不能替代游戏验收。
+本示例展示了托管插件的标准生命周期、UI 扩展模式以及打包发布全流程：
+- **自定义多语言 Tab**：使用 `IMainTabProvider` 在 Phinix 窗口顶栏注册主页面。
+- **配置持久化**：使用 `IClientSettingsContext` 读写带有包作用域前缀的用户设置。
+- **交互状态与弹窗**：实现点击计数器、响应式布局提示与重置确认对话框。
+- **宿主隔离本地化**：加载包内专属的中英文（`en-US.json`、`zh-CN.json`）语言文件。
+- **安全执行**：**不包含任何白银或物品生成能力，不修改殖民地状态，亦不发起任何外部网络请求。**
+
+---
+
+## 玩家体验步骤
+
+在游戏内测试此插件：
+1. 打开游戏内 Phinix 窗口，切换至 **商店**（Store）Tab。
+2. 找到 **Phinix 示例插件**，点击 **安装**（Install）。
+3. **完全退出并重启 RimWorld** 以加载插件程序集。
+4. 打开 Phinix 窗口：
+   - 点击新增的 **示例**（Example）Tab 体验点击计数。
+   - 打开 **设置**（Settings）→ **示例**，切换说明提示开关或测试重置计数器。
+   - 在游戏选项中切换中英文语言，观察界面文本即时更新。
+5. 在 **扩展管理**（Extension Manager）中测试停用或卸载该插件，重启游戏后确认干净清理。
+
+---
+
+## 源码地图
+
+| 职责模块 | 对应源码 / 资源 | 说明 |
+| :--- | :--- | :--- |
+| **模块入口与生命周期** | `example/ExampleExtension.cs` (`ExampleExtension`) | 实现 `IPhinixExtensionModule` 与 `IActivatablePhinixExtensionModule`，负责服务注册与关闭注销。 |
+| **状态与设置管理** | `example/ExampleExtension.cs` (`ExampleState`) | 使用 `IClientSettingsContext` 存取键（如 `phinix.example.basic.clicks`）并监听语言变更事件。 |
+| **Tab 页面绘制** | `example/ExampleExtension.cs` (`ExampleTab`) | 实现 `IMainTabProvider` 接口绘制响应式按钮与文本。 |
+| **设置面板** | `example/ExampleExtension.cs` (`ExampleSettingsPanel`) | 实现 `IClientSettingsPanelProvider` 提供设置复选框与操作按钮。 |
+| **双语本地化资源** | `example/Resources/Localization/{en-US,zh-CN}.json` | 包作用域的翻译字典，支持带占位符的参数格式化。 |
+| **打包工具脚本** | `pack.py` | 调用官方 `ManagedPackageTool` 生成符合索引规范的发行 ZIP 包。 |
+
+---
 
 ## 构建与打包
 
-需要 .NET 10、含本地化支持的 Phinix-Rework 开发检出、自备 RimWorld 1.6 参考。1.0.0 基于 Assembly-CSharp 1.6.9676.18020 / ClientExtensionAbstractions 1.7.0，不分发参考 DLL。
+### 环境准备
 
-```sh
-python3 pack.py --phinix-root /absolute/Phinix-Rework --game-references /absolute/RimWorld/Managed --output /absolute/new-output/phinix-example-basic-1.0.2.zip
+- **.NET 10 SDK**（执行编译与打包工具）
+- **本地 Phinix-Rework 源码**：用于引用 `Utils` 与 `ClientExtensionAbstractions`。
+- **RimWorld 1.6 程序集引用**：仅用于编译的程序集（`Assembly-CSharp.dll`、`UnityEngine*.dll`）。严禁提交或随包分发。
+
+### 快捷打包命令
+
+在仓库根目录下执行：
+
+```bash
+python3 pack.py \
+  --phinix-root <path-to-Phinix-Rework> \
+  --game-references <path-to-RimWorld-Managed> \
+  --output <path-to-output>/phinix-example-basic-1.0.2.zip
 ```
 
-可选 --bundle-output /absolute/new-folder 生成开发文件夹。商店安装前移走手工副本避免重复。包/模块 ID 为 phinix.example.basic，程序集 Phinix.Example.Basic，不迁移旧 Playtest 身份和计数。
+若需输出未压缩的开发文件夹供本地快速测试，可追加：
+`--bundle-output <path-to-output>/phinix-example-basic/`
 
-## 正规发布演示
+---
 
-提交源码、发布固定 Release ZIP、向[正式索引](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/new/choose)提交准确候选。静态检查通过后维护者添加 plugin-approved；机器人生成并合入证据 PR、复核、发布目录，成功关闭 Issue。作者不自我批准、不手工合入元数据、不向 index 上传 DLL。参见[发布者指南](https://github.com/HunYuan2333/Phinix-Plugin-Index/blob/main/GitHubBotGuide.zh-CN.md)。
+## 包体结构规范
 
-旧 Playtest 留在独立测试仓库，不进入正式目录。本仓库存源码及资产，index 只保存校验后的元数据。
+标准的 Phinix 托管插件 ZIP 包内部目录树如下：
 
-## 已发布示例
+```text
+phinix-example-basic-1.0.2.zip
+├── manifest.json
+├── Assemblies/
+│   └── Phinix.Example.Basic.dll
+└── Resources/
+    └── Localization/
+        ├── en-US.json
+        └── zh-CN.json
+```
 
-1.0.0 已在正式商店上架，完整正规流程为[申请 #15](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/15) → [证据 PR #16](https://github.com/HunYuan2333/Phinix-Plugin-Index/pull/16) → [自动发布成功](https://github.com/HunYuan2333/Phinix-Plugin-Index/actions/runs/37335979507)。GitHub 与 CF 下载已核对相同 SHA-256。尚需按照上方清单进行人工游戏验收。
+- **`manifest.json`**：包含包 ID、版本、声明程序集、兼容 Phinix 版本范围与依赖声明。
+- **`Assemblies/`**：仅包含插件自身编译出的 DLL 文件。
+- **`Resources/`**：包含插件专属的资源与语言字典。
 
-设置区内部 ID 用于注册，示例通过自身本地化服务显示标题；新版 host 不会将未翻译的内部 ID 当作玩家标题。
+> [!CAUTION]
+> 压缩包内**绝对不能**包含 RimWorld 游戏程序集（如 `Assembly-CSharp.dll`）、宿主程序集（如 `Utils.dll`、`ClientExtensionAbstractions.dll`）或 Harmony。包含这些文件会导致运行时程序集冲突，并在索引准入静态校验时被直接拒绝。
+
+---
+
+## 本地化与回退机制
+
+- **双语词典**：存放在 `Resources/Localization/<locale>.json`。
+- **回退策略**：宿主根据当前游戏语言匹配词条；若当前语言未翻译，自动回退到 `en-US`。
+- **缺词保护**：若某个词条在所有语言字典中均不存在，本地化服务直接返回原始 Key 字符串，避免抛出异常阻断渲染。
+- **商店元数据 vs 游戏 UI**：商店目录中的多语言简介在提交 Issue 时定义；游戏内 UI 文案打包在插件 ZIP 内部。
+
+---
+
+## 改造为您自己的插件
+
+将本示例改写为您自己的独立插件时，请注意以下关键点：
+1. **修改唯一身份**：在 `Example.csproj`、`manifest.json` 与所有 `[PhinixExtension("...")]` 特性中修改包 ID（如 `myname.myplugin`）。
+2. **命名空间与程序集**：重命名 `Phinix.Example.Basic` 并修改 `Example.csproj` 的输出程序集名称。
+3. **设置键前缀**：所有配置键名必须带上自己的包 ID 前缀（如 `myname.myplugin.settingKey`），避免与其他插件冲突。
+4. **发布与申请上架**：
+   - 建立公开 GitHub 仓库，发布包含规范 ZIP 包的正式 GitHub Release。
+   - 参照 [申请指南](https://github.com/HunYuan2333/Phinix-Plugin-Index/blob/main/README.zh-CN.md#%E6%8F%92%E4%BB%B6%E4%BD%9C%E8%80%85%E6%8F%90%E4%BA%A4%E6%8C%87%E5%8D%97) 前往 [Phinix-Plugin-Index](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/new/choose) 提交收录表单。
