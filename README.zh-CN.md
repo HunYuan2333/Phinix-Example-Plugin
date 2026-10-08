@@ -112,3 +112,13 @@ phinix-example-basic-1.0.2.zip
 4. **发布与申请上架**：
    - 建立公开 GitHub 仓库，发布包含规范 ZIP 包的正式 GitHub Release。
    - 参照 [申请指南](https://github.com/HunYuan2333/Phinix-Plugin-Index/blob/main/README.zh-CN.md#%E6%8F%92%E4%BB%B6%E4%BD%9C%E8%80%85%E6%8F%90%E4%BA%A4%E6%8C%87%E5%8D%97) 前往 [Phinix-Plugin-Index](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/new/choose) 提交收录表单。
+
+## 拆仓后的构建输入
+
+使用 `Phinix-Rework` 的 dev 客户端 checkout，先执行 `git submodule update --init --recursive`。示例从客户端固定的 `Dependencies/Phinix.Common` 引用 Utils，不引用旁边浮动的 Common 分支。`pack.py` 参数保持原样：
+
+```sh
+python3 pack.py --phinix-root /path/to/Phinix-Rework --game-references /path/to/Phinix-Rework/GameDlls/1.6 --output /tmp/phinix-example.zip
+```
+
+拆仓不改包/程序集身份，也不重写已有发布物。
