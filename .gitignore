@@ -7,3 +7,6 @@
 .idea/
 __pycache__/
 *.pyc
+
+dist/
+.ci-release.json

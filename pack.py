@@ -10,13 +10,15 @@ p.add_argument('--phinix-root', type=Path, required=True)
 p.add_argument('--game-references', type=Path, required=True)
 p.add_argument('--output', type=Path, required=True)
 p.add_argument('--bundle-output', type=Path)
+p.add_argument('--version', help='CI release version; defaults to the project version')
 a = p.parse_args()
 host = a.phinix_root.resolve(); game = a.game_references.resolve()
 common = host/'Dependencies/Phinix.Common'
 if not (common/'Common/Utils/Utils.csproj').is_file():
     raise SystemExit('Initialize the client pinned submodules: git submodule update --init --recursive')
 root = Path(__file__).resolve().parent
-version = ET.parse(root/'example/Example.csproj').getroot().findtext('PropertyGroup/Version')
+project_version = ET.parse(root/'example/Example.csproj').getroot().findtext('PropertyGroup/Version')
+version = a.version or project_version
 if not version:
     raise SystemExit('Example.csproj must declare Version.')
 subprocess.run(['dotnet', 'build', str(root/'example/Example.csproj'), '-c', 'Release', '-m:1', '-p:BuildInParallel=false', '-p:PhinixRoot='+str(host), '-p:GameReferences='+str(game)], check=True)
