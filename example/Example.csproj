@@ -7,13 +7,14 @@
     <Version>1.0.2</Version>
     <AssemblyVersion>1.0.2.0</AssemblyVersion>
     <PhinixRoot Condition="'$(PhinixRoot)' == ''">$(MSBuildThisFileDirectory)../../../..</PhinixRoot>
+    <PhinixCommonRoot Condition="'$(PhinixCommonRoot)' == ''">$(PhinixRoot)/Dependencies/Phinix.Common</PhinixCommonRoot>
     <GameReferences Condition="'$(GameReferences)' == '' and Exists('$(PhinixRoot)/GameDlls/1.6')">$(PhinixRoot)/GameDlls/1.6</GameReferences>
     <GameReferences Condition="'$(GameReferences)' == ''">$(PhinixRoot)/GameDlls</GameReferences>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ExampleExtension.cs" />
     <ProjectReference Include="$(PhinixRoot)/Client/ClientExtensionAbstractions/ClientExtensionAbstractions.csproj"><Private>false</Private></ProjectReference>
-    <ProjectReference Include="$(PhinixRoot)/Common/Utils/Utils.csproj"><Private>false</Private><SetTargetFramework>TargetFramework=net472</SetTargetFramework></ProjectReference>
+    <ProjectReference Include="$(PhinixCommonRoot)/Common/Utils/Utils.csproj"><Private>false</Private><SetTargetFramework>TargetFramework=net472</SetTargetFramework></ProjectReference>
     <Reference Include="Assembly-CSharp"><HintPath>$(GameReferences)/Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(GameReferences)/UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.TextRenderingModule"><HintPath>$(GameReferences)/UnityEngine.TextRenderingModule.dll</HintPath><Private>false</Private></Reference>

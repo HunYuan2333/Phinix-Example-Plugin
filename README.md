@@ -112,3 +112,13 @@ To turn this example into your own custom plugin:
 4. **Publish & Submit**:
    - Create a public GitHub repository and publish an immutable GitHub Release containing your ZIP package.
    - Submit an issue to [Phinix-Plugin-Index](https://github.com/HunYuan2333/Phinix-Plugin-Index/issues/new/choose) following the [Submission Guide](https://github.com/HunYuan2333/Phinix-Plugin-Index#author-submission-guide).
+
+## Split repository build inputs
+
+Use the `Phinix-Rework` dev client checkout, initialized with `git submodule update --init --recursive`. The example references Utils through its pinned `Dependencies/Phinix.Common` checkout, not a neighboring floating Common branch. `pack.py` keeps the same public arguments:
+
+```sh
+python3 pack.py --phinix-root /path/to/Phinix-Rework --game-references /path/to/Phinix-Rework/GameDlls/1.6 --output /tmp/phinix-example.zip
+```
+
+The repository split does not change package/assembly identities or rewrite existing published releases.
