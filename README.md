@@ -6,6 +6,12 @@
 
 The official minimal reference implementation for authoring, packaging, and publishing Phinix managed plugins (Package ID: `phinix.example.basic`).
 
+> [!NOTE]
+> - **Technical Guide**: For full documentation on public APIs, lifecycle, DI composition, threading, and resource ownership, see the [Phinix Plugin Development Guide](https://github.com/HunYuan2333/Phinix-Rework/blob/dev/docs/Plugin-Development.md).
+> - **Implementation Status**: This example currently runs via the legacy `IPhinixExtensionModule` lifecycle interface; migration to modern DI composition (`ClientExtensionModule.Compose`) is planned for a subsequent iteration.
+> - **Build Status**: Automated GitHub Actions compilation (automatic build/package on main push, no build on dev) is actively scheduled under F7; packaging currently uses the local `pack.py` entry point.
+> - **Skill Notice**: The Phinix plugin development skill is currently in preparation; integration links will be added once ready.
+
 ---
 
 ## Overview & Features

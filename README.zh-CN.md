@@ -6,6 +6,12 @@
 
 Phinix 托管插件官方最小完备参考实现（包 ID: `phinix.example.basic`）。
 
+> [!NOTE]
+> - **技术指南**：关于公开 API、生命周期、DI 组合、线程与资源所有权规范，详见 [Phinix 插件开发指南](https://github.com/HunYuan2333/Phinix-Rework/blob/dev/docs/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97.md)。
+> - **实现状态**：本示例当前基于 `IPhinixExtensionModule` 传统生命周期接口运行；向现代 DI 组合模式（`ClientExtensionModule.Compose`）的迁移为后续规划事项。
+> - **构建状态**：GitHub Actions 云端自动构建（main 提交自动编译打包，dev 不编译）正在 F7 统一规划实施中；当前通过本地 `pack.py` 完成打包。
+> - **Skill 说明**：Phinix 插件开发 skill 正在准备中，后续将补充链接。
+
 ---
 
 ## 概述与功能特性
