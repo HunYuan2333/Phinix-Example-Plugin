@@ -39,7 +39,10 @@ if __name__=='__main__':
     config=json.loads(Path('ci/config.json').read_text())
     if os.environ.get('GITHUB_REF')!='refs/heads/main' or os.environ.get('GITHUB_EVENT_NAME')!='push' or os.environ.get('GITHUB_REPOSITORY')!=config['repository']:
         raise SystemExit('Official releases require a push to this repository main branch.')
-    sha=os.environ['GITHUB_SHA'];release=reserve(config,sha)
+    sha=os.environ['GITHUB_SHA']
+    if not re.fullmatch(r'[0-9a-f]{40}', sha):
+        raise SystemExit('Release source must be a full commit SHA.')
+    release=reserve(config,sha)
     Path('.ci-release.json').write_text(json.dumps(release))
     with open(os.environ['GITHUB_OUTPUT'],'a') as output:
         output.write('version='+release['tag_name'][1:]+'\n')
