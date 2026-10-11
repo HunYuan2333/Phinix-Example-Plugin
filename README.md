@@ -8,7 +8,7 @@ The official minimal reference implementation for authoring, packaging, and publ
 
 > [!NOTE]
 > - **Technical Guide**: For full documentation on public APIs, lifecycle, DI composition, threading, and resource ownership, see the [Phinix Plugin Development Guide](https://github.com/HunYuan2333/Phinix-Rework/blob/dev/docs/Plugin-Development.md).
-> - **Implementation Status**: This example currently runs via the legacy `IPhinixExtensionModule` lifecycle interface; migration to modern DI composition (`ClientExtensionModule.Compose`) is planned for a subsequent iteration.
+> - **Implementation Status**: The development source uses `ClientExtensionModule.Compose` and a plugin-owned DI scope. Prepared public host DLLs are borrowed; published 1.0.2 release artifacts are unchanged. See the [local development loop](https://github.com/HunYuan2333/Phinix-Rework/blob/dev/docs/Local-Plugin-Quickstart.md).
 > - **Build Status**: Automated GitHub Actions compilation (automatic build/package on main push, no build on dev) is actively scheduled under F7; packaging currently uses the local `pack.py` entry point.
 > - **Skill Notice**: The Phinix plugin development skill is currently in preparation; integration links will be added once ready.
 
@@ -43,7 +43,7 @@ To try this plugin in RimWorld:
 
 | Responsibility | File / Symbol | Description |
 | :--- | :--- | :--- |
-| **Module Entry & Lifecycle** | `example/ExampleExtension.cs` (`ExampleExtension`) | Implements `IPhinixExtensionModule` and `IActivatablePhinixExtensionModule`. Handles registration and teardown. |
+| **Module Entry & Lifecycle** | `example/ExampleExtension.cs` (`ExampleExtension`) | Uses `ClientExtensionModule.Compose`, owns a DI scope, and activates/releases state through the ordinary lifecycle. |
 | **State & Settings Management** | `example/ExampleExtension.cs` (`ExampleState`) | Stores persisted keys (e.g., `phinix.example.basic.clicks`) and manages localization events. |
 | **Tab UI Rendering** | `example/ExampleExtension.cs` (`ExampleTab`) | Implements `IMainTabProvider` to draw responsive buttons and text. |
 | **Settings Panel** | `example/ExampleExtension.cs` (`ExampleSettingsPanel`) | Implements `IClientSettingsPanelProvider` to render settings checkboxes and action buttons. |
@@ -57,7 +57,7 @@ To try this plugin in RimWorld:
 ### Prerequisites
 
 - **.NET 10 SDK** (runs compilation and packaging tools)
-- **Local Phinix-Rework Source**: Used to reference `Utils` and `ClientExtensionAbstractions`.
+- **Prepared Public Host DLLs**: `Utils` and `ClientExtensionAbstractions` from a built/installed Phinix Rework. Plugin builds do not rebuild the host.
 - **RimWorld 1.6 References**: Compile-only assemblies (`Assembly-CSharp.dll`, `UnityEngine*.dll`). Never commit or distribute game assemblies.
 
 ### Quick Packaging Command
@@ -112,7 +112,7 @@ phinix-example-basic-1.0.2.zip
 ## Adapting into Your Own Plugin
 
 To turn this example into your own custom plugin:
-1. **Change Identities**: Update the package ID (e.g., `myname.myplugin`) in `Example.csproj`, `manifest.json`, and all `[PhinixExtension("...")]` attributes.
+1. **Change Identities**: Update `PluginPackageId`, `PluginDisplayName` and `AssemblyName` in `Example.csproj`, plus the module attribute and `ExtensionId`. `manifest.json` is generated, not manually edited. Declare compatibility/dependencies/external mods in `example/package-config.json`.
 2. **Namespace & Assembly Name**: Rename `Phinix.Example.Basic` and update assembly outputs in `Example.csproj`.
 3. **Settings Key Prefix**: Prefix all settings keys with your package ID (e.g., `myname.myplugin.settingKey`) to avoid colliding with other plugins.
 4. **Publish & Submit**:
@@ -128,3 +128,27 @@ python3 pack.py --phinix-root /path/to/Phinix-Rework --game-references /path/to/
 ```
 
 The repository split does not change package/assembly identities or rewrite existing published releases.
+
+For an installed host, add `--host-assemblies /path/to/phinix-rework/Common/Assemblies`. The packer recognizes numbered DLLs. Use `--packager /path/ManagedPackageTool.dll` to reuse a prepared tool. `pack.py` builds only this plugin and automatically runs offline ZIP and CLR-reference validation. No GitHub/token/Release is required for local work.
+
+Enable RimWorld developer mode and choose Store → Install local plugin ZIP, then review and restart. Same-version different-digest development revisions are supported; identical digests and downgrades are rejected. Another source's installed package cannot be overwritten. Extension management remains available after developer mode is disabled and copies both installed and current-session build digests.
+
+After building the host and this plugin, run the focused lifecycle regression:
+
+```sh
+dotnet run --project Tests/ExampleLifecycleTests.csproj -c Release -p:PhinixRoot=/path/to/Phinix-Rework
+```
+
+It exercises the actual compiled Example through ordinary discovery/DI for five cycles, checking settings, translation subscriptions, queued callbacks and borrowed-service ownership. It does not certify rendering or game save/disconnect behavior. Game acceptance remains required before unblocking skill work.
+
+## Theme example
+
+The local 1.0.3 candidate demonstrates ordinary module registration, role fallback, immutable draw snapshots and owned lease disposal. It targets current client API 2.0 and does not include a legacy branch. See [the theme example](Theme-Example.md). Online publication remains deferred.
+
+
+## API semantic example
+
+Local candidate 1.0.4 adds observable main-thread callbacks, cancellation and failure demonstrations using the public task scope. See [Api-Semantics-Example.md](Api-Semantics-Example.md). Requires the matching current host; no online release or game acceptance is claimed.
+
+
+Local candidate 1.0.5 adds typed action extension points and an owned menu example. See Api-Semantics-Example.md and example/ExampleActions.cs. This is an experiment against the matching current host, without online/game acceptance.

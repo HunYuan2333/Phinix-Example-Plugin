@@ -8,7 +8,7 @@ Phinix 托管插件官方最小完备参考实现（包 ID: `phinix.example.basi
 
 > [!NOTE]
 > - **技术指南**：关于公开 API、生命周期、DI 组合、线程与资源所有权规范，详见 [Phinix 插件开发指南](https://github.com/HunYuan2333/Phinix-Rework/blob/dev/docs/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97.md)。
-> - **实现状态**：本示例当前基于 `IPhinixExtensionModule` 传统生命周期接口运行；向现代 DI 组合模式（`ClientExtensionModule.Compose`）的迁移为后续规划事项。
+> - **实现状态**：开发源码已迁移 `ClientExtensionModule.Compose`，拥有插件 DI scope，借用宿主服务；既有正式 1.0.2 制品不改写。[本地开发闭环](https://github.com/HunYuan2333/Phinix-Rework/blob/dev/docs/Local-Plugin-Quickstart.md)不要求 GitHub、token 或 Release。
 > - **构建状态**：GitHub Actions 云端自动构建（main 提交自动编译打包，dev 不编译）正在 F7 统一规划实施中；当前通过本地 `pack.py` 完成打包。
 > - **Skill 说明**：Phinix 插件开发 skill 正在准备中，后续将补充链接。
 
@@ -43,7 +43,7 @@ Phinix 托管插件官方最小完备参考实现（包 ID: `phinix.example.basi
 
 | 职责模块 | 对应源码 / 资源 | 说明 |
 | :--- | :--- | :--- |
-| **模块入口与生命周期** | `example/ExampleExtension.cs` (`ExampleExtension`) | 实现 `IPhinixExtensionModule` 与 `IActivatablePhinixExtensionModule`，负责服务注册与关闭注销。 |
+| **模块入口与生命周期** | `example/ExampleExtension.cs` (`ExampleExtension`) | 使用 `ClientExtensionModule.Compose`，拥有 DI scope，按通用生命周期启动和释放。 |
 | **状态与设置管理** | `example/ExampleExtension.cs` (`ExampleState`) | 使用 `IClientSettingsContext` 存取键（如 `phinix.example.basic.clicks`）并监听语言变更事件。 |
 | **Tab 页面绘制** | `example/ExampleExtension.cs` (`ExampleTab`) | 实现 `IMainTabProvider` 接口绘制响应式按钮与文本。 |
 | **设置面板** | `example/ExampleExtension.cs` (`ExampleSettingsPanel`) | 实现 `IClientSettingsPanelProvider` 提供设置复选框与操作按钮。 |
@@ -112,7 +112,7 @@ phinix-example-basic-1.0.2.zip
 ## 改造为您自己的插件
 
 将本示例改写为您自己的独立插件时，请注意以下关键点：
-1. **修改唯一身份**：在 `Example.csproj`、`manifest.json` 与所有 `[PhinixExtension("...")]` 特性中修改包 ID（如 `myname.myplugin`）。
+1. **修改唯一身份**：修改 `Example.csproj` 的 `PluginPackageId`、`PluginDisplayName`、`AssemblyName`，以及模块特性、`ExtensionId`。`manifest.json` 自动生成，不手改；兼容范围、依赖、外部 Mod 在 `example/package-config.json` 声明。
 2. **命名空间与程序集**：重命名 `Phinix.Example.Basic` 并修改 `Example.csproj` 的输出程序集名称。
 3. **设置键前缀**：所有配置键名必须带上自己的包 ID 前缀（如 `myname.myplugin.settingKey`），避免与其他插件冲突。
 4. **发布与申请上架**：
@@ -128,3 +128,21 @@ python3 pack.py --phinix-root /path/to/Phinix-Rework --game-references /path/to/
 ```
 
 拆仓不改包/程序集身份，也不重写已有发布物。
+
+已安装宿主可添加 `--host-assemblies /path/to/phinix-rework/Common/Assemblies`，打包脚本会识别带数字前缀的 DLL。`--packager /path/ManagedPackageTool.dll` 复用已构建工具，`--version 1.0.3` 保留 main 发行的版本注入。`pack.py` 只编译当前插件，并自动执行离线 ZIP/实际 CLR 引用预检。
+
+开启 RimWorld 开发者模式，从商店“安装本地插件 ZIP”导入并重启。允许同版本不同摘要开发修订，拒绝重复摘要、降级和覆盖其他来源。关闭开发者模式后，已安装开发包仍可启停/卸载，扩展管理可复制当前和已安装构建摘要。
+
+宿主与示例编译后执行 `dotnet run --project Tests/ExampleLifecycleTests.csproj -c Release -p:PhinixRoot=/path/to/Phinix-Rework`，验证实际 Example 五轮发现/DI 激活/关闭、设置保留、翻译订阅、过期回调与借用服务不被释放。控制台回归不能替代游戏切档、断线与 UI 验收；完成游戏验收前 skill 继续暂停。
+
+## 主题示例
+
+本地 1.0.3 候选增加普通模块主题注册、缺键回退、绘制快照和 scope 释放示例。要求当前 API 2.0，不含旧客户端分支。详见 [主题示例](Theme-Example.md)。在线发布仍延期。
+
+
+## API 语义样例
+
+本地候选 1.0.4 用公开任务 scope 展示回调状态、取消和失败；详见 [API 语义样例](Api-Semantics-Example.md)。要求本批完整当前 Host，未在线发布或游戏验收。
+
+
+本地候选 1.0.5 新增强类型操作接入点与 owned 菜单实验，见 Api-Semantics-Example.md 与 example/ExampleActions.cs；要求本批完整当前 Host，未在线/游戏验收。

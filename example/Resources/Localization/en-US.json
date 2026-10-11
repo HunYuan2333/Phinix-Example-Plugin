@@ -4,7 +4,7 @@
   "display": {
     "name": "Phinix Example Plugin",
     "summary": "A simple example of plugin tabs, persistent settings and localization. Click the counter to explore the extension API; it does not create items or change your colony.",
-    "changelog": "1.0.2: upgrade acceptance release. Verify the update notice, explicit confirmation, restart activation and retained counter/settings when upgrading from 1.0.1. Example functionality is unchanged; no gameplay actions."
+    "changelog": "1.0.6: provider availability and owned lifetime API examples; current client candidate."
   },
   "strings": {
     "tab": "Example",
@@ -15,6 +15,30 @@
     "settingsTitle": "Example plugin settings",
     "showHints": "Show explanations in the example tab",
     "reset": "Reset count",
-    "confirmReset": "Reset this plugin’s click counter to zero? This only changes its own settings; your colony and save are unchanged."
+    "confirmReset": "Reset this plugin’s click counter to zero? This only changes its own settings; your colony and save are unchanged.",
+    "taskNone": "No callback submitted",
+    "taskQueued": "Callback queued",
+    "taskRunning": "Callback running",
+    "taskSucceeded": "Callback completed",
+    "taskRejected": "Callback rejected",
+    "taskCanceled": "Callback canceled",
+    "taskFailed": "Callback failed",
+    "taskCancel": "Show cancellation",
+    "taskFail": "Show callback failure",
+    "contributionMenu": "Open contributed actions",
+    "contributionAdd": "Count using a contribution",
+    "contributionReset": "Open reset confirmation",
+    "contributionDisabled": "Counter is already zero",
+    "apiDemo": "Explore provider and lifetime APIs",
+    "apiProviders": "Available theme providers",
+    "apiOwn": "Own tab provider available",
+    "apiOptional": "Optional API provider count",
+    "apiLifetime": "Callbacks / released resources",
+    "apiCanceled": "Scope canceled",
+    "apiPulse": "Call event and late callback",
+    "apiClose": "Close scope",
+    "apiRebind": "Bind again",
+    "apiInspect": "Query providers",
+    "apiTip": "Opening binds an owned scope. After closing it, invoking again must not increment callbacks. Rebind to restore it. Theme changes also trigger the subscription; closing this window releases it. A missing optional API is ordinary capability state."
   }
 }
