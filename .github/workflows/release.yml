@@ -32,6 +32,7 @@ jobs:
         if: steps.release.outputs.published != 'true'
         run: |
           if [ -f check-source.py ]; then python3 check-source.py; fi
+          python3 -m unittest discover -s ci/tests -v
       - name: Read fixed host commit
         id: host
         if: steps.release.outputs.published != 'true'
