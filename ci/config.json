@@ -1,0 +1,17 @@
+{
+  "repository": "HunYuan2333/Phinix-Example-Plugin",
+  "kind": "example",
+  "baseVersion": "1.1.0",
+  "assetPrefix": "phinix-example-basic",
+  "name": "Phinix Rework Example",
+  "hostCommit": "783fcb0bb6ad56b97e8ca5875457babfe6520c25",
+  "references": {
+    "repository": "HunYuan2333/Phinix-Rework-Build-References",
+    "tag": "refs-rw16-v3",
+    "asset": "references-rw16-v3.zip",
+    "sha256": "f4a7ce75b1ab3ff4eef532be333f54d4faac2ca40e9ebfae04ab9964e12aac12"
+  },
+  "requiredPresentationMembers": [
+    "WithIconSource"
+  ]
+}

@@ -6,8 +6,8 @@
     <AssemblyName>Phinix.Example.Basic</AssemblyName>
     <PluginPackageId>phinix.example.basic</PluginPackageId>
     <PluginDisplayName>Phinix Example Plugin</PluginDisplayName>
-    <Version>1.0.2</Version>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <PhinixRoot Condition="'$(PhinixRoot)' == ''">$(MSBuildThisFileDirectory)../../Phinix-Rework</PhinixRoot>
     <PhinixCommonRoot Condition="'$(PhinixCommonRoot)' == ''">$(PhinixRoot)/Dependencies/Phinix.Common</PhinixCommonRoot>
     <GameReferences Condition="'$(GameReferences)' == '' and Exists('$(PhinixRoot)/GameDlls/1.6')">$(PhinixRoot)/GameDlls/1.6</GameReferences>
@@ -20,6 +20,7 @@
     <Compile Include="ExampleTheme.cs" />
     <Compile Include="ExampleActions.cs" />
     <Compile Include="ExampleAuthorServices.cs" />
+    <Compile Include="ExamplePresentation.cs" />
     <Reference Include="ClientExtensionAbstractions"><HintPath>$(PhinixAbstractionsAssemblyPath)</HintPath><Private>false</Private></Reference>
     <Reference Include="Utils"><HintPath>$(PhinixUtilsAssemblyPath)</HintPath><Private>false</Private></Reference>
     <Reference Include="Assembly-CSharp"><HintPath>$(GameReferences)/Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>

@@ -30,6 +30,8 @@ namespace Phinix.Example.Basic
                 local.Register<ExampleAuthorServices,ExampleAuthorServices>();
                 local.Borrow(host.GetRequiredService<IClientExtensionPointService>());
                 local.Register<ExampleActions,ExampleActions>();
+                local.Borrow(host.GetRequiredService<IClientPresentationService>());
+                local.Register<ExamplePresentation,ExamplePresentation>();
                 local.Borrow<Action<string,LogLevel>>(host.Log??((message,level)=>{}));
                 local.Register<ExampleState,ExampleState>();
                 local.Register<IMainTabProvider,ExampleTab>();
@@ -38,7 +40,8 @@ namespace Phinix.Example.Basic
             try
             {
                 state=scope.Resolve<ExampleState>();
-                builder.RegisterApi(scope.Resolve<IMainTabProvider>());
+                var tab=(ExampleTab)scope.Resolve<IMainTabProvider>();
+                builder.RegisterApi<IMainTabProvider>(new ClientPresentationMainTab(tab,tab.ViewOpened,tab.ViewUpdate,tab.ViewClosed,tab.NavigationId));
                 builder.RegisterApi(scope.Resolve<IClientSettingsPanelProvider>());
             }
             catch { Shutdown(host); throw; }
@@ -54,6 +57,7 @@ namespace Phinix.Example.Basic
                 tasks=hostContext.GetRequiredService<IClientTaskService>().ForModule(this);
                 state.Start(localizer,tasks);
                 scope.Resolve<ExampleActions>().Start(this);
+                scope.Resolve<ExamplePresentation>().Start(this);
                 scope.Resolve<ExampleAuthorServices>().Start(this);
             }
             catch { tasks?.Dispose(); localizer.Dispose(); throw; }
@@ -76,6 +80,7 @@ namespace Phinix.Example.Basic
         private long generation;
         internal bool Active => localizer != null && tasks != null;
         internal long Generation => generation;
+        internal string Locale => localizer?.Locale ?? "";
         internal int Count => Math.Max(0, settings?.Get("phinix.example.basic.clicks", 0) ?? 0);
         internal bool ShowHints => settings?.Get("phinix.example.basic.showHints", true) ?? true;
         internal string Text(string key) { return localizer?.Text(key) ?? key; }
@@ -134,6 +139,12 @@ namespace Phinix.Example.Basic
             settings.Set("phinix.example.basic.showHints", value);
             log?.Invoke("Example: show hints=" + value + ".", LogLevel.INFO);
         }
+        internal void ResetCount()
+        {
+            if (!Active) return;
+            settings.Set("phinix.example.basic.clicks", 0);
+            log?.Invoke("Example: click counter reset.", LogLevel.INFO);
+        }
         internal void ConfirmReset()
         {
             if (!Active) return;
@@ -142,20 +153,25 @@ namespace Phinix.Example.Basic
             {
                 // A confirmation from a previous activation cannot change retained settings.
                 if (!Active || ticket != generation) return;
-                settings.Set("phinix.example.basic.clicks", 0);
-                log?.Invoke("Example: click counter reset.", LogLevel.INFO);
+                ResetCount();
             }));
         }
     }
 
-    internal sealed class ExampleTab : IMainTabProvider, IResponsiveMainTabProvider
+    internal sealed class ExampleTab : IMainTabProvider, IResponsiveMainTabProvider, IClientNavigationMetadata
     {
+        private int viewOpens,viewCloses;private bool viewVisible;
+        internal void ViewOpened(){viewVisible=true;viewOpens++;}
+        internal void ViewUpdate(){ }
+        internal void ViewClosed(){viewVisible=false;viewCloses++;}
         private readonly ExampleState state;
         private readonly ExampleTheme theme;
         private readonly ExampleActions actions;
         private readonly ExampleAuthorServices authorServices;
+        private readonly ExamplePresentation presentation;
         private static readonly UiLayoutHints Hints = new UiLayoutHints(new Vector2(320f, 240f), new Vector2(820f, 480f), true);
-        public ExampleTab(ExampleState state, ExampleTheme theme, ExampleActions actions,ExampleAuthorServices authorServices) { this.state = state; this.theme=theme; this.actions=actions;this.authorServices=authorServices; }
+        public string NavigationId => "example";
+        public ExampleTab(ExampleState state, ExampleTheme theme, ExampleActions actions,ExampleAuthorServices authorServices, ExamplePresentation presentation) { this.state = state; this.theme=theme; this.actions=actions;this.authorServices=authorServices; this.presentation=presentation; }
         public string TabLabel => state.Text("tab");
         public float TabOrder => 998f;
         public UiLayoutHints LayoutHints => Hints;
@@ -168,6 +184,12 @@ namespace Phinix.Example.Basic
                 Text.Font = GameFont.Small; Text.Anchor = TextAnchor.UpperLeft; Text.WordWrap = true; GUI.color = palette.PrimaryText;
                 ClientWidgets.Fill(inRect,palette.GetColor("phinix.example.basic.panel"));
                 float y = inRect.y;
+                if(state.ShowHints&&inRect.height>=36){ClientWidgets.LabelEllipses(new Rect(inRect.x,y,inRect.width,30),string.Format(state.Text("viewLifecycle"),viewOpens,viewCloses,viewVisible?state.Text("visible"):state.Text("hidden")),palette);y+=36;}
+                if (inRect.yMax - y >= 30)
+                {
+                    if (ClientWidgets.Button(new Rect(inRect.x, y, inRect.width, 30), state.Text("hostPresentation"), palette)) presentation.Open();
+                    y += 36;
+                }
                 if (state.ShowHints)
                 {
                     float height = Math.Min(Text.CalcHeight(state.Text("intro"), inRect.width), Math.Max(0, inRect.height - 192));
@@ -209,6 +231,10 @@ namespace Phinix.Example.Basic
 
     internal sealed class ExampleSettingsPanel : IClientSettingsPanelProvider
     {
+        private int viewOpens,viewCloses;private bool viewVisible;
+        internal void ViewOpened(){viewVisible=true;viewOpens++;}
+        internal void ViewUpdate(){ }
+        internal void ViewClosed(){viewVisible=false;viewCloses++;}
         private readonly ExampleState state;
         private readonly ExampleTheme theme;
         public ExampleSettingsPanel(ExampleState state, ExampleTheme theme) { this.state = state; this.theme=theme; }

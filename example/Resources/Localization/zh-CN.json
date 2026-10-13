@@ -4,11 +4,11 @@
   "display": {
     "name": "Phinix 示例插件",
     "summary": "展示插件 Tab、持久设置和多语言支持。点击计数按钮了解扩展 API；不会生成物品或改变殖民地。",
-    "changelog": "1.0.6: provider availability and owned lifetime API examples; current client candidate."
+    "changelog": "1.1.0：统一 Host 页面、控件和动作示例，新增借用纹理与生命周期演示。"
   },
   "strings": {
     "tab": "示例",
-    "intro": "这个示例通过公开扩展 API 添加 Tab。试试下面的计数按钮，它只修改插件自身的设置。",
+    "intro": "这里演示公共插件 API。试试计数按钮，它只修改本插件的设置。",
     "click": "点击计数",
     "count": "点击次数：{0}",
     "persistence": "计数在重启或重装后保留。切换游戏语言即可体验本地化。",
@@ -25,11 +25,11 @@
     "taskFailed": "回调执行失败",
     "taskCancel": "演示取消",
     "taskFail": "演示回调失败",
-    "contributionMenu": "打开接入操作",
+    "contributionMenu": "扩展操作",
     "contributionAdd": "通过贡献操作计数",
     "contributionReset": "打开重置确认",
     "contributionDisabled": "计数已为零",
-    "apiDemo": "查看 provider 与生命周期 API",
+    "apiDemo": "查看 API 与生命周期示例",
     "apiProviders": "可用主题 provider",
     "apiOwn": "自身 Tab provider 可用",
     "apiOptional": "可选 API provider 数量",
@@ -39,6 +39,24 @@
     "apiClose": "关闭作用域",
     "apiRebind": "重新绑定",
     "apiInspect": "重新查询 provider",
-    "apiTip": "打开时绑定自有作用域。关闭后再次调用，回调次数不应增加；重新绑定后恢复。切换主题也会触发订阅，关闭窗口立即释放。可选 API 缺失是正常能力状态。"
+    "apiTip": "打开窗口会绑定作用域。关闭作用域后，回调计数应停止增加；重新绑定后恢复。主题切换也会触发回调。可选 API 不可用时，相应操作无法执行。",
+    "hostPresentation": "打开 Host 渲染的计数器",
+    "cancel": "取消",
+    "counterFull": "计数已达到上限",
+    "publicControls": "公共字段 / 虚拟列表 / 只读自绘区域",
+    "selectionOnly": "选择一行查看详情，再用下方按钮执行操作。",
+    "filter": "筛选动作",
+    "noMatches": "没有匹配的动作。",
+    "toggleLayout": "切换固定单栏 / 双栏布局",
+    "composerNote": "示例草稿 / Enter 增加计数（仅演示）",
+    "registeredPoints": "已注册的公共动作点",
+    "operationOwnership": "关闭窗口不会撤销已提交的操作。回调结束不代表操作成功；只读记录不能用于强制重试或退款。",
+    "readOnlyList": "只读清单",
+    "readOnlyListHint": "此清单仅供查看，点击不会执行操作。",
+    "boundedQuantity": "数量草稿 · 0–100",
+    "boundedQuantityInvalid": "请输入 0–100 的整数；这里只修改草稿。",
+    "viewLifecycle": "页面：打开 {0} / 关闭 {1} · {2}",
+    "visible": "可见",
+    "hidden": "隐藏"
   }
 }

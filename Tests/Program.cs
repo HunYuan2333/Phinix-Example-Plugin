@@ -31,6 +31,10 @@ internal static class Program
                 {
                     var host=new ExtensionHostContext {Log=(message,level)=>logs.Add(message)};
                     host.AddService<IClientCompositionFactory>(factory);
+                    var borrowed=new BorrowedServices();
+                    host.AddService<IClientApiDirectory>(borrowed);
+                    host.AddService<IClientLifetimeService>(borrowed);
+                    host.AddService<IClientPresentationService>(borrowed);
                     host.AddService<IClientSettingsContext>(settings);
                     var theme=new Theme();
                     host.AddService<IClientTheme>(theme);
@@ -41,7 +45,7 @@ internal static class Program
                     host.AddService<IClientLocalizationService>(localization);
                     host.AddService<IExtensionDiscoveryPolicy>(new Discovery());
                     var found=PhinixExtensionRegistry.DiscoverExtensions(host);
-                    Check(found.Modules.Count==1 && found.Warnings.Count==0,"Actual Example composes through ordinary discovery");
+                    Check(found.Modules.Count==1 && found.Warnings.Count==0,"Actual Example composes through ordinary discovery: modules="+found.Modules.Count+" warnings="+string.Join("; ",found.Warnings)+" logs="+string.Join("; ",logs));
                     PhinixExtensionRegistry.ActivateExtensions(found,host);
                     Check(found.ApiRegistry.ResolveAll<IMainTabProvider>().Count==1 && found.ApiRegistry.ResolveAll<IClientSettingsPanelProvider>().Count==1,"DI registers one tab and one settings provider");
                     var module=found.Modules.Single();
@@ -171,4 +175,24 @@ internal static class Program
         public void Change()=>changed?.Invoke();
         public void Dispose() {Disposals++;}
     }
+    private sealed class BorrowedServices : IClientApiDirectory,IClientLifetimeService,IClientPresentationService
+    {
+        public IReadOnlyList<IClientApiProvider<T>> Capture<T>() where T:class => Array.Empty<IClientApiProvider<T>>();
+        public IClientLifetimeScope ForModule(IPhinixExtensionModule module)=>new Scope(module.ExtensionId);
+        public IClientPresentationSession Open(IPhinixExtensionModule module,string id)=>throw new InvalidOperationException("Lifecycle test does not open GUI sessions");
+        private sealed class Scope : IClientLifetimeScope
+        {
+            public Scope(string owner){OwnerId=owner;}
+            public string OwnerId {get;}public bool IsClosed {get;private set;}
+            private readonly System.Threading.CancellationTokenSource stop=new System.Threading.CancellationTokenSource();
+            private readonly List<IDisposable> owned=new List<IDisposable>();
+            public System.Threading.CancellationToken Stopping=>stop.Token;
+            public IDisposable Own(IDisposable resource){owned.Add(resource);return resource;}
+            public IDisposable Subscribe(Action<Action> subscribe,Action<Action> unsubscribe,Action callback)
+            {Action guarded=()=>{if(!IsClosed)callback();};subscribe(guarded);return Own(new Cleanup(()=>unsubscribe(guarded)));}
+            public void Dispose(){if(IsClosed)return;IsClosed=true;stop.Cancel();foreach(var resource in owned)resource.Dispose();owned.Clear();stop.Dispose();}
+        }
+        private sealed class Cleanup : IDisposable {private Action action;public Cleanup(Action action){this.action=action;}public void Dispose(){var old=action;action=null;old?.Invoke();}}
+    }
+
 }

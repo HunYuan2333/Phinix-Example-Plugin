@@ -4,11 +4,11 @@
   "display": {
     "name": "Phinix Example Plugin",
     "summary": "A simple example of plugin tabs, persistent settings and localization. Click the counter to explore the extension API; it does not create items or change your colony.",
-    "changelog": "1.0.6: provider availability and owned lifetime API examples; current client candidate."
+    "changelog": "1.1.0: Shared Host pages, controls and actions, with borrowed texture and lifetime examples."
   },
   "strings": {
     "tab": "Example",
-    "intro": "This example adds a tab through the public extension API. Try the counter below; it only changes this plugin’s own settings.",
+    "intro": "Try the public plugin API with the counter below. It changes only this plugin’s settings.",
     "click": "Count a click",
     "count": "Clicks: {0}",
     "persistence": "The count stays after a restart or reinstall. Switch the game language to see localization in action.",
@@ -25,11 +25,11 @@
     "taskFailed": "Callback failed",
     "taskCancel": "Show cancellation",
     "taskFail": "Show callback failure",
-    "contributionMenu": "Open contributed actions",
+    "contributionMenu": "Contributed actions",
     "contributionAdd": "Count using a contribution",
     "contributionReset": "Open reset confirmation",
     "contributionDisabled": "Counter is already zero",
-    "apiDemo": "Explore provider and lifetime APIs",
+    "apiDemo": "Explore API and lifetime examples",
     "apiProviders": "Available theme providers",
     "apiOwn": "Own tab provider available",
     "apiOptional": "Optional API provider count",
@@ -39,6 +39,24 @@
     "apiClose": "Close scope",
     "apiRebind": "Bind again",
     "apiInspect": "Query providers",
-    "apiTip": "Opening binds an owned scope. After closing it, invoking again must not increment callbacks. Rebind to restore it. Theme changes also trigger the subscription; closing this window releases it. A missing optional API is ordinary capability state."
+    "apiTip": "Opening the window binds a scope. Closing the scope stops its callback count; binding again restores it. Theme changes also trigger callbacks. Actions requiring an unavailable optional API cannot run.",
+    "hostPresentation": "Open Host-rendered counter",
+    "cancel": "Cancel",
+    "counterFull": "Counter has reached its limit",
+    "publicControls": "Public fields / virtual list / passive region",
+    "selectionOnly": "Select a row to view details, then use the buttons below to act.",
+    "filter": "Filter actions",
+    "noMatches": "No matching actions.",
+    "toggleLayout": "Toggle pinned single / split layout",
+    "composerNote": "Draft note / Enter to count (example only)",
+    "registeredPoints": "Registered public action points",
+    "operationOwnership": "Closing the window does not withdraw submitted actions. A finished callback does not confirm success; read-only records cannot authorize forced retries or refunds.",
+    "readOnlyList": "Read-only list",
+    "readOnlyListHint": "This list is read-only. Clicking does not perform an action.",
+    "boundedQuantity": "Quantity draft · 0–100",
+    "boundedQuantityInvalid": "Enter a whole number from 0 to 100. This changes only the draft.",
+    "viewLifecycle": "Page: opened {0} / closed {1} · {2}",
+    "visible": "Visible",
+    "hidden": "Hidden"
   }
 }
