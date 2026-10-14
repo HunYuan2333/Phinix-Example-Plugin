@@ -3,7 +3,7 @@
   "locale": "en-US",
   "display": {
     "name": "Phinix Example Plugin",
-    "summary": "A simple example of plugin tabs, persistent settings and localization. Click the counter to explore the extension API; it does not create items or change your colony.",
+    "summary": "A simple example of plugin tabs, persistent settings and localization. Click the counter to explore the extension API; it does not create items or change your colony. Before updating this plugin, update the Phinix Rework main mod on Steam to version 0.10.1 or later. Wait for the download to finish, then restart the game.",
     "changelog": "1.1.0: Shared Host pages, controls and actions, with borrowed texture and lifetime examples."
   },
   "strings": {

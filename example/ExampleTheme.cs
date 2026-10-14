@@ -19,9 +19,9 @@ namespace Phinix.Example.Basic
             var owned=registry.RegisterModule(module, "phinix.example.basic", "Example / 示例");
             try
             {
-                owned.RegisterColor("phinix.example.basic.panel",new Color(.12f,.16f,.2f,.12f),
+                owned.RegisterColor("phinix.example.basic.panel",new ClientRgba(.12f,.16f,.2f,.12f),
                     label:"Panel / 面板背景",fallbackKey:"ui.surface",group:"Example / 示例",description:"Background of the example panel / 示例面板背景");
-                owned.RegisterColor("phinix.example.basic.counter",new Color(.35f,.8f,1),
+                owned.RegisterColor("phinix.example.basic.counter",new ClientRgba(.35f,.8f,1),
                     label:"Counter / 计数强调",fallbackKey:"ui.accent",group:"Example / 示例",description:"Color of the existing click count / 已有点击计数的颜色");
                 owned.Commit(); registration=owned;
             }

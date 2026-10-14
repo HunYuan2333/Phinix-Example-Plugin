@@ -1,5 +1,7 @@
 # Phinix Example Plugin
 
+> **当前迁移构建 / Current migration build:** API3 单包兼容 1.6/1.7；命令和上线缺项以 [BUILDING-DUAL.md](BUILDING-DUAL.md) 为准。未部署线上流程；下文早期发行记录不代表当前迁移包的兼容范围。
+
 <p align="center">
   English · <a href="./README.zh-CN.md">简体中文</a>
 </p>
@@ -66,9 +68,12 @@ From this repository's root, execute:
 
 ```bash
 python3 pack.py \
-  --phinix-root <path-to-Phinix-Rework> \
-  --game-references <path-to-RimWorld-Managed> \
-  --output <path-to-output>/phinix-example-basic-1.0.2.zip
+  --phinix-root /path/to/Phinix-Rework \
+  --game-references /path/to/rw16-references \
+  --game17-references /path/to/rw17-references \
+  --harmony17 /path/to/rw17-references/0Harmony.dll \
+  --version 0.0.1 \
+  --output /tmp/phinix-example-dual-local.zip
 ```
 
 To create an uncompressed developer folder for direct local testing, add:
@@ -124,12 +129,18 @@ To turn this example into your own custom plugin:
 Use the `Phinix-Rework` dev client checkout, initialized with `git submodule update --init --recursive`. The example references Utils through its pinned `Dependencies/Phinix.Common` checkout, not a neighboring floating Common branch. `pack.py` keeps the same public arguments:
 
 ```sh
-python3 pack.py --phinix-root /path/to/Phinix-Rework --game-references /path/to/Phinix-Rework/GameDlls/1.6 --output /tmp/phinix-example.zip
+python3 pack.py \
+  --phinix-root /path/to/Phinix-Rework \
+  --game-references /path/to/rw16-references \
+  --game17-references /path/to/rw17-references \
+  --harmony17 /path/to/rw17-references/0Harmony.dll \
+  --version 0.0.1 \
+  --output /tmp/phinix-example-dual-local.zip
 ```
 
 The repository split does not change package/assembly identities or rewrite existing published releases.
 
-For an installed host, add `--host-assemblies /path/to/phinix-rework/Common/Assemblies`. The packer recognizes numbered DLLs. Use `--packager /path/ManagedPackageTool.dll` to reuse a prepared tool. `pack.py` builds only this plugin and automatically runs offline ZIP and CLR-reference validation. No GitHub/token/Release is required for local work.
+当前打包参数见 [BUILDING-DUAL.md](BUILDING-DUAL.md)。 / Current arguments: see BUILDING-DUAL.md.
 
 Enable RimWorld developer mode and choose Store → Install local plugin ZIP, then review and restart. Same-version different-digest development revisions are supported; identical digests and downgrades are rejected. Another source's installed package cannot be overwritten. Extension management remains available after developer mode is disabled and copies both installed and current-session build digests.
 

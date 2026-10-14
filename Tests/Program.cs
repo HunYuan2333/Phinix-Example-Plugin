@@ -76,20 +76,20 @@ internal static class Program
     private sealed class Theme : IClientTheme,IClientThemeRegistry
     {
         public long Version=>1;
-        public UnityEngine.Color PrimaryText=>default; public UnityEngine.Color SecondaryText=>default;
-        public UnityEngine.Color Background=>default; public UnityEngine.Color Surface=>default;
-        public UnityEngine.Color Separator=>default; public UnityEngine.Color HoverHighlight=>default;
-        public UnityEngine.Color Pending=>default; public UnityEngine.Color Error=>default;
-        public UnityEngine.Color Success=>default; public UnityEngine.Color Warning=>default;
+        public PhinixClient.Framework.ClientRgba PrimaryText=>default; public PhinixClient.Framework.ClientRgba SecondaryText=>default;
+        public PhinixClient.Framework.ClientRgba Background=>default; public PhinixClient.Framework.ClientRgba Surface=>default;
+        public PhinixClient.Framework.ClientRgba Separator=>default; public PhinixClient.Framework.ClientRgba HoverHighlight=>default;
+        public PhinixClient.Framework.ClientRgba Pending=>default; public PhinixClient.Framework.ClientRgba Error=>default;
+        public PhinixClient.Framework.ClientRgba Success=>default; public PhinixClient.Framework.ClientRgba Warning=>default;
         public event Action Changed { add {} remove {} }
-        public UnityEngine.Color GetColor(string key)=>default;
-        public bool TryGetColor(string key,out UnityEngine.Color value) { value=default;return true; }
+        public PhinixClient.Framework.ClientRgba GetColor(string key)=>default;
+        public bool TryGetColor(string key,out PhinixClient.Framework.ClientRgba value) { value=default;return true; }
         public float GetFloat(string key,float fallback=0)=>fallback;
-        public ClientThemeSnapshot Capture()=>new ClientThemeSnapshot(Version,new Dictionary<string,UnityEngine.Color>(),new Dictionary<string,float>());
+        public ClientThemeSnapshot Capture()=>new ClientThemeSnapshot(Version,new Dictionary<string,ClientRgba>(),new Dictionary<string,float>());
         public IClientThemeRegistration RegisterModule(IPhinixExtensionModule module,string keyNamespace=null,string ownerLabel=null)=>new Registration();
         private sealed class Registration : IClientThemeRegistration
         {
-            public void RegisterColor(string key,UnityEngine.Color color,string label=null,string fallbackKey=null,string group=null,string description=null){}
+            public void RegisterColor(string key,ClientRgba color,string label=null,string fallbackKey=null,string group=null,string description=null){}
             public void RegisterFloat(string key,float value,float minimum=0,float maximum=1,string label=null,string group=null,string description=null){}
             public void Commit(){} public void Dispose(){}
         }

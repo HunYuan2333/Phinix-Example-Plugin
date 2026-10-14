@@ -155,10 +155,10 @@ namespace Phinix.Example.Basic
                     }, "", followEnd: false)));
                     sections.Add(new ClientPresentationSection("readonly-preview", state.Text("readOnlyList"), state.Text("readOnlyListHint"),
                         list: new ClientPresentationList("readonly-facts", new[] {
-                            new ClientPresentationRow("count-fact", state.CountText).WithIcon(Texture2D.whiteTexture),
-                            new ClientPresentationRow("task-fact", nextTask).WithIconSource(() => Texture2D.whiteTexture)
+                            new ClientPresentationRow("count-fact", state.CountText).WithImage(ClientTextureImage.FromTexture(Texture2D.whiteTexture)),
+                            new ClientPresentationRow("task-fact", nextTask).WithImage(ClientTextureImage.FromSource(() => Texture2D.whiteTexture, () => !session.IsClosed, null, default(ClientPresentationImageSize)))
                         }, "").WithReadOnly()).WithPlainLayout());
-                    sections.Add(new ClientPresentationSection("color-preview", "RGBA", "").WithSwatches(new[] { new ClientPresentationSwatch("range", "0–1", new Color(rangeValue, .5f, .3f)), new ClientPresentationSwatch("alpha", "alpha", new Color(.3f, .7f, .9f, .5f)) }));
+                    sections.Add(new ClientPresentationSection("color-preview", "RGBA", "").WithSwatches(new[] { new ClientPresentationSwatch("range", "0–1", new ClientRgba(rangeValue, .5f, .3f)), new ClientPresentationSwatch("alpha", "alpha", new ClientRgba(.3f, .7f, .9f, .5f)) }));
                     sections.Add(new ClientPresentationSection("registered-points", state.Text("registeredPoints"),
                         string.Join("\n", owner.contributions.CapturePoints().Select(p => p.Id + " · " + p.OwnerId + " · " + p.ContextType.Name + " · " + p.ContributorCount))));
                     if (nextHints) sections.Add(new ClientPresentationSection("operation-ownership", "", state.Text("operationOwnership")));
@@ -178,13 +178,13 @@ namespace Phinix.Example.Basic
                 private readonly int count;
                 internal CounterPreview(int count) { this.count = count; }
                 public float Measure(float width, IClientThemeReader theme) => 12;
-                public void Draw(Rect rect, IClientThemeReader theme) { ClientWidgets.Progress(rect, Math.Min(count, 10) / 10f, theme); }
+                public void Draw(IClientPresentationDrawContext context) { context.Progress(context.Bounds, Math.Min(count, 10) / 10f); }
             }
             public override void DoWindowContents(Rect rect)
             {
                 if (Widgets.ButtonText(new Rect(rect.x, rect.y, rect.width, 32), "⋯"))
-                    Find.WindowStack.Add(new FloatMenu(session.CreateActionMenuOptions()));
-                session.Draw(new Rect(rect.x, rect.y + 40, rect.width, Mathf.Max(0, rect.height - 40)));
+                    Find.WindowStack.Add(new FloatMenu(ClientPresentationMenus.ToGameOptions(session.CreateActionMenuItems())));
+                session.Draw(new ClientPresentationBounds(rect.x, rect.y + 40, rect.width, Mathf.Max(0, rect.height - 40)));
             }
             public override void PostClose()
             {

@@ -1,5 +1,7 @@
 # Phinix 示例插件
 
+> **当前迁移构建 / Current migration build:** API3 单包兼容 1.6/1.7；命令和上线缺项以 [BUILDING-DUAL.md](BUILDING-DUAL.md) 为准。未部署线上流程；下文早期发行记录不代表当前迁移包的兼容范围。
+
 <p align="center">
   <a href="./README.md">English</a> · 简体中文
 </p>
@@ -66,9 +68,12 @@ Phinix 托管插件官方最小完备参考实现（包 ID: `phinix.example.basi
 
 ```bash
 python3 pack.py \
-  --phinix-root <path-to-Phinix-Rework> \
-  --game-references <path-to-RimWorld-Managed> \
-  --output <path-to-output>/phinix-example-basic-1.0.2.zip
+  --phinix-root /path/to/Phinix-Rework \
+  --game-references /path/to/rw16-references \
+  --game17-references /path/to/rw17-references \
+  --harmony17 /path/to/rw17-references/0Harmony.dll \
+  --version 0.0.1 \
+  --output /tmp/phinix-example-dual-local.zip
 ```
 
 若需输出未压缩的开发文件夹供本地快速测试，可追加：
@@ -124,12 +129,18 @@ phinix-example-basic-1.0.2.zip
 使用 `Phinix-Rework` 的 dev 客户端 checkout，先执行 `git submodule update --init --recursive`。示例从客户端固定的 `Dependencies/Phinix.Common` 引用 Utils，不引用旁边浮动的 Common 分支。`pack.py` 参数保持原样：
 
 ```sh
-python3 pack.py --phinix-root /path/to/Phinix-Rework --game-references /path/to/Phinix-Rework/GameDlls/1.6 --output /tmp/phinix-example.zip
+python3 pack.py \
+  --phinix-root /path/to/Phinix-Rework \
+  --game-references /path/to/rw16-references \
+  --game17-references /path/to/rw17-references \
+  --harmony17 /path/to/rw17-references/0Harmony.dll \
+  --version 0.0.1 \
+  --output /tmp/phinix-example-dual-local.zip
 ```
 
 拆仓不改包/程序集身份，也不重写已有发布物。
 
-已安装宿主可添加 `--host-assemblies /path/to/phinix-rework/Common/Assemblies`，打包脚本会识别带数字前缀的 DLL。`--packager /path/ManagedPackageTool.dll` 复用已构建工具，`--version 1.0.3` 保留 main 发行的版本注入。`pack.py` 只编译当前插件，并自动执行离线 ZIP/实际 CLR 引用预检。
+当前打包参数见 [BUILDING-DUAL.md](BUILDING-DUAL.md)。 / Current arguments: see BUILDING-DUAL.md.
 
 开启 RimWorld 开发者模式，从商店“安装本地插件 ZIP”导入并重启。允许同版本不同摘要开发修订，拒绝重复摘要、降级和覆盖其他来源。关闭开发者模式后，已安装开发包仍可启停/卸载，扩展管理可复制当前和已安装构建摘要。
 

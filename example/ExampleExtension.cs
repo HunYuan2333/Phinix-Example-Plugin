@@ -181,8 +181,8 @@ namespace Phinix.Example.Basic
             var palette=theme.Capture();
             using (new ClientGuiScope(true))
             {
-                Text.Font = GameFont.Small; Text.Anchor = TextAnchor.UpperLeft; Text.WordWrap = true; GUI.color = palette.PrimaryText;
-                ClientWidgets.Fill(inRect,palette.GetColor("phinix.example.basic.panel"));
+                Text.Font = GameFont.Small; Text.Anchor = TextAnchor.UpperLeft; Text.WordWrap = true; GUI.color = palette.PrimaryText.ToUnityColor();
+                ClientWidgets.Fill(inRect,palette.GetColor("phinix.example.basic.panel").ToUnityColor());
                 float y = inRect.y;
                 if(state.ShowHints&&inRect.height>=36){ClientWidgets.LabelEllipses(new Rect(inRect.x,y,inRect.width,30),string.Format(state.Text("viewLifecycle"),viewOpens,viewCloses,viewVisible?state.Text("visible"):state.Text("hidden")),palette);y+=36;}
                 if (inRect.yMax - y >= 30)
@@ -197,7 +197,7 @@ namespace Phinix.Example.Basic
                 }
                 if (inRect.yMax - y >= 30)
                 {
-                    if (ClientWidgets.Button(new Rect(inRect.x, y, inRect.width, 30), state.Text("click") + " · " + state.CountText,palette,textColor:palette.GetColor("phinix.example.basic.counter"))) state.Click();
+                    if (ClientWidgets.Button(new Rect(inRect.x, y, inRect.width, 30), state.Text("click") + " · " + state.CountText,palette,textColor:palette.GetColor("phinix.example.basic.counter").ToUnityColor())) state.Click();
                     y += 36;
                 }
                 if (inRect.yMax - y >= 30)
@@ -247,7 +247,7 @@ namespace Phinix.Example.Basic
             var palette=theme.Capture();
             using (new ClientGuiScope(true))
             {
-                Text.Font = GameFont.Small; Text.Anchor = TextAnchor.UpperLeft; Text.WordWrap = true; GUI.color = palette.PrimaryText;
+                Text.Font = GameFont.Small; Text.Anchor = TextAnchor.UpperLeft; Text.WordWrap = true; GUI.color = palette.PrimaryText.ToUnityColor();
                 listing.Label(state.Text("settingsTitle"));
                 bool hints = state.ShowHints;
                 Rect rect = listing.GetRect(Math.Max(30, Text.CalcHeight(state.Text("showHints"), Math.Max(1, listing.ColumnWidth - 36))));
