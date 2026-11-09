@@ -4,7 +4,7 @@
   "baseVersion": "1.1.0",
   "assetPrefix": "phinix-example-basic",
   "name": "Phinix Rework Example",
-  "hostCommit": "afb6afb6c5f68b8815964ebab7092a1b033b682e",
+  "hostCommit": "9c0c5aecd8dd6214bf4d6427f0879fc74de2d28e",
   "references": {
     "repository": "HunYuan2333/Phinix-Rework-Build-References",
     "tag": "refs-rw16-v3",
