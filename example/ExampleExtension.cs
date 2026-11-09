@@ -32,6 +32,9 @@ namespace Phinix.Example.Basic
                 local.Register<ExampleActions,ExampleActions>();
                 local.Borrow(host.GetRequiredService<IClientPresentationService>());
                 local.Register<ExamplePresentation,ExamplePresentation>();
+                local.Borrow(host.GetRequiredService<IClientMainThreadDispatcher>());
+                local.Register<ExampleRelay,ExampleRelay>();
+                local.Register<ExampleRelayPanel,ExampleRelayPanel>();
                 local.Borrow<Action<string,LogLevel>>(host.Log??((message,level)=>{}));
                 local.Register<ExampleState,ExampleState>();
                 local.Register<IMainTabProvider,ExampleTab>();
@@ -40,6 +43,7 @@ namespace Phinix.Example.Basic
             try
             {
                 state=scope.Resolve<ExampleState>();
+                builder.AddClientCommandHandler(scope.Resolve<ExampleRelay>());
                 var tab=(ExampleTab)scope.Resolve<IMainTabProvider>();
                 builder.RegisterApi<IMainTabProvider>(new ClientPresentationMainTab(tab,tab.ViewOpened,tab.ViewUpdate,tab.ViewClosed,tab.NavigationId));
                 builder.RegisterApi(scope.Resolve<IClientSettingsPanelProvider>());
@@ -59,6 +63,8 @@ namespace Phinix.Example.Basic
                 scope.Resolve<ExampleActions>().Start(this);
                 scope.Resolve<ExamplePresentation>().Start(this);
                 scope.Resolve<ExampleAuthorServices>().Start(this);
+                scope.Resolve<ExampleRelay>().Start(hostContext);
+                scope.Resolve<ExampleRelayPanel>().Start(this);
             }
             catch { tasks?.Dispose(); localizer.Dispose(); throw; }
         }
@@ -169,9 +175,10 @@ namespace Phinix.Example.Basic
         private readonly ExampleActions actions;
         private readonly ExampleAuthorServices authorServices;
         private readonly ExamplePresentation presentation;
+        private readonly ExampleRelayPanel relayPanel;
         private static readonly UiLayoutHints Hints = new UiLayoutHints(new Vector2(320f, 240f), new Vector2(820f, 480f), true);
         public string NavigationId => "example";
-        public ExampleTab(ExampleState state, ExampleTheme theme, ExampleActions actions,ExampleAuthorServices authorServices, ExamplePresentation presentation) { this.state = state; this.theme=theme; this.actions=actions;this.authorServices=authorServices; this.presentation=presentation; }
+        public ExampleTab(ExampleState state, ExampleTheme theme, ExampleActions actions,ExampleAuthorServices authorServices, ExamplePresentation presentation, ExampleRelayPanel relayPanel) { this.state = state; this.theme=theme; this.actions=actions;this.authorServices=authorServices; this.presentation=presentation; this.relayPanel=relayPanel; }
         public string TabLabel => state.Text("tab");
         public float TabOrder => 998f;
         public UiLayoutHints LayoutHints => Hints;
@@ -188,6 +195,11 @@ namespace Phinix.Example.Basic
                 if (inRect.yMax - y >= 30)
                 {
                     if (ClientWidgets.Button(new Rect(inRect.x, y, inRect.width, 30), state.Text("hostPresentation"), palette)) presentation.Open();
+                    y += 36;
+                }
+                if (inRect.yMax - y >= 30)
+                {
+                    if (ClientWidgets.Button(new Rect(inRect.x, y, inRect.width, 30), state.Text("relayTitle"), palette)) relayPanel.Open();
                     y += 36;
                 }
                 if (state.ShowHints)

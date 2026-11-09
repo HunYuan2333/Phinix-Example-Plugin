@@ -8,14 +8,14 @@ using PhinixClient;
 using PhinixClient.Framework;
 using Utils.Framework;
 
-internal static class Program
+internal static partial class Program
 {
     private static int assertions;
     private static void Check(bool condition,string message)
     { if(!condition) throw new Exception(message); assertions++; }
     private static int Main()
     {
-        foreach(string file in new[]{"02-Protobuf.dll","03-Utils.dll","10-ClientExtensionAbstractions.dll"})
+        foreach(string file in new[]{"02-Protobuf.dll","03-Utils.dll","09-ClientPresentation.Contracts.dll","08-UserManagement.dll","10-ClientExtensionAbstractions.dll"})
             Assembly.LoadFrom(Path.Combine(AppContext.BaseDirectory,file));
         return Run();
     }
@@ -31,6 +31,11 @@ internal static class Program
                 {
                     var host=new ExtensionHostContext {Log=(message,level)=>logs.Add(message)};
                     host.AddService<IClientCompositionFactory>(factory);
+                    var relayCapabilities = new ClientCommandCapabilities();
+                    var relayService = new RelayService();
+                    host.AddService<IClientCommandCapabilities>(relayCapabilities);
+                    host.AddService<IClientCommandRelay>(relayService);
+                    host.AddService<IClientUserDirectory>(new RelayDirectory());
                     var borrowed=new BorrowedServices();
                     host.AddService<IClientApiDirectory>(borrowed);
                     host.AddService<IClientLifetimeService>(borrowed);
@@ -49,6 +54,8 @@ internal static class Program
                     PhinixExtensionRegistry.ActivateExtensions(found,host);
                     Check(found.ApiRegistry.ResolveAll<IMainTabProvider>().Count==1 && found.ApiRegistry.ResolveAll<IClientSettingsPanelProvider>().Count==1,"DI registers one tab and one settings provider");
                     var module=found.Modules.Single();
+                    var relayHandler = found.ClientCommandHandlers.Single();
+                    AssertRelayControls(relayHandler, relayCapabilities, relayService, dispatcher);
                     object state=typeof(ExampleExtension).GetField("state",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(module);
                     var click=state.GetType().GetMethod("Click",BindingFlags.Instance|BindingFlags.NonPublic);
                     Check(localization.Current.Subscribers==1,"Activation has one language subscription");
@@ -61,9 +68,13 @@ internal static class Program
                     int callbacks=logs.Count(l=>l.Contains("main-thread callback"));
                     PhinixExtensionRegistry.ShutdownExtensions(found,host);
                     PhinixExtensionRegistry.ShutdownExtensions(found,host);
+                    Check(relayCapabilities.GetSnapshot().Count == 0, "Shutdown revokes all Relay declarations.");
+                    relayService.Finish();
                     dispatcher.Drain();
+                    Check(RelayRecords(relayHandler) == 0, "Late Relay completion cannot repopulate stopped state.");
                     Check(logs.Count(l=>l.Contains("main-thread callback"))==callbacks,"Shutdown rejects queued callbacks from the old activation");
                     Check(localization.Current.Subscribers==0 && localization.Current.Disposals==1,"Localizer unsubscribes and releases exactly once");
+                    Check(!relayService.Disposed, "Borrowed Relay service remains owned by Host.");
                     Check(!settings.Disposed && !dispatcher.Disposed && !localization.Disposed,"Borrowed host services are never disposed");
                     settings.Set("phinix.example.basic.clicks",cycle+1);
                 }

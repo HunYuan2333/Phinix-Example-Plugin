@@ -171,3 +171,7 @@ Develop on dev; it triggers no Actions. Every accepted push to main reserves the
 Maintainers configure BUILD_REFERENCES_TOKEN as a repository secret, with Contents:Read only on the private compile-reference repository named in ci/config.json. This is a maintainer CI setup; third-party authors supply their own licensed references. No game/host/Harmony DLL is uploaded in public artifacts. Assembly identity versions remain independently controlled by source; the automatically assigned package release version is passed to pack.py --version.
 
 Merging into main means the author has accepted publication. A GitHub Release does not bypass Index admission/source-update policy or prove game acceptance. Test changes on dev before merging. Fixed host/reference inputs are maintained explicitly in ci/config.json. Do not overwrite released ZIPs or expose the reference token.
+
+## Relay candidate testing
+
+The test branch adds a client communication panel. See [Relay-Test-Panel.md](Relay-Test-Panel.md) for controls and candidate Host requirements.

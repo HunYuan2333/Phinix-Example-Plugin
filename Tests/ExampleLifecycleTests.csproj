@@ -7,6 +7,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Phinix.Example.Basic"><HintPath>../example/bin/Release/net472/Phinix.Example.Basic.dll</HintPath></Reference>
+    <Reference Include="UserManagement"><HintPath>$(HostAssemblies)/08-UserManagement.dll</HintPath></Reference>
+    <Reference Include="ClientPresentation.Contracts"><HintPath>$(HostAssemblies)/09-ClientPresentation.Contracts.dll</HintPath></Reference>
     <Reference Include="Utils"><HintPath>$(HostAssemblies)/03-Utils.dll</HintPath></Reference>
     <Reference Include="ClientExtensionAbstractions"><HintPath>$(HostAssemblies)/10-ClientExtensionAbstractions.dll</HintPath></Reference>
     <Reference Include="Phinix.ClientComposition"><HintPath>$(HostAssemblies)/Phinix.ClientComposition.dll</HintPath></Reference>

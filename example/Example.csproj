@@ -22,6 +22,9 @@
     <Compile Include="ExampleActions.cs" />
     <Compile Include="ExampleAuthorServices.cs" />
     <Compile Include="ExamplePresentation.cs" />
+    <Compile Include="ExampleRelay.cs" />
+    <Compile Include="ExampleRelayPanel.cs" />
+    <Reference Include="UserManagement"><HintPath>$(PhinixCommonRoot)/Common/UserManagement/bin/Release/net472/UserManagement.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="ClientPresentation.Contracts"><HintPath>$(PhinixPresentationAssemblyPath)</HintPath><Private>false</Private></Reference>
     <Reference Include="ClientExtensionAbstractions"><HintPath>$(PhinixAbstractionsAssemblyPath)</HintPath><Private>false</Private></Reference>
     <Reference Include="Utils"><HintPath>$(PhinixUtilsAssemblyPath)</HintPath><Private>false</Private></Reference>
