@@ -1,14 +1,28 @@
 {
   "repository": "HunYuan2333/Phinix-Example-Plugin",
   "kind": "example",
-  "baseVersion": "1.0.2",
+  "baseVersion": "1.1.0",
   "assetPrefix": "phinix-example-basic",
   "name": "Phinix Rework Example",
-  "hostCommit": "403cea6c207a630fae391c6dc29bbce5a5a17b3b",
+  "hostCommit": "9c0c5aecd8dd6214bf4d6427f0879fc74de2d28e",
   "references": {
     "repository": "HunYuan2333/Phinix-Rework-Build-References",
     "tag": "refs-rw16-v3",
     "asset": "references-rw16-v3.zip",
     "sha256": "f4a7ce75b1ab3ff4eef532be333f54d4faac2ca40e9ebfae04ab9964e12aac12"
+  },
+  "requiredPresentationMembers": [
+    "WithImage"
+  ],
+  "clientApi": "3.0.0",
+  "games": [
+    "1.6",
+    "1.7"
+  ],
+  "references17": {
+    "repository": "HunYuan2333/Phinix-Rework-Build-References",
+    "tag": "refs-rw17-v1",
+    "asset": "references-rw17-v1.zip",
+    "sha256": "41ddc7bc1dbf5bfe39059e549dd77310823621cbd46171214b43652ad10226bf"
   }
 }
